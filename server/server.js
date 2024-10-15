@@ -9,7 +9,9 @@ require('dotenv').config();
 const app = express();
 
 // Enable CORS for all routes
-app.use(cors());  // Enable CORS middleware
+app.use(cors({
+  origin: 'https://instagram-2zk7.onrender.com',  // Only allow requests from this origin
+}));  // Enable CORS middleware
 
 // Middleware for parsing JSON bodies
 app.use(bodyParser.json());
